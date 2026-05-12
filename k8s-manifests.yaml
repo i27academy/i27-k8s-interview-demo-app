@@ -1,0 +1,206 @@
+# ──────────────────────────────────────────────────────
+# i27Academy Demo App — Kubernetes Manifests
+# Use these across ALL interview scenario episodes
+#
+# Sections:
+# 1. Namespace
+# 2. Deployment v1 (stable)
+# 3. Deployment v2 (new release)
+# 4. Service
+# 5. Scenario-specific variants
+# ──────────────────────────────────────────────────────
+
+---
+# 1. NAMESPACE
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: demo
+  labels:
+    app: i27academy
+    managed-by: i27academy-series
+
+---
+# 2. DEPLOYMENT v1 — stable, all probes correct
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: i27-app
+  namespace: demo
+  labels:
+    app: i27-app
+    version: v1
+    managed-by: i27academy
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: i27-app
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
+  template:
+    metadata:
+      labels:
+        app: i27-app
+        version: v1
+    spec:
+      containers:
+      - name: app
+        image: i27academy/demo-app:v1
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
+          name: http
+        env:
+        - name: APP_VERSION
+          value: "v1"
+        - name: APP_COLOR
+          value: "orange"
+        - name: APP_ENV
+          value: "production"
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "64Mi"
+          limits:
+            cpu: "200m"
+            memory: "128Mi"
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: 8080
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          failureThreshold: 3
+          timeoutSeconds: 5
+        readinessProbe:
+          httpGet:
+            path: /ready
+            port: 8080
+          initialDelaySeconds: 5
+          periodSeconds: 5
+          failureThreshold: 3
+          timeoutSeconds: 3
+
+---
+# 3. DEPLOYMENT v2 — new release (orange → blue)
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: i27-app
+  namespace: demo
+  labels:
+    app: i27-app
+    version: v2
+    managed-by: i27academy
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: i27-app
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
+  template:
+    metadata:
+      labels:
+        app: i27-app
+        version: v2
+    spec:
+      containers:
+      - name: app
+        image: i27academy/demo-app:v2
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
+          name: http
+        env:
+        - name: APP_VERSION
+          value: "v2"
+        - name: APP_COLOR
+          value: "blue"
+        - name: APP_ENV
+          value: "production"
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "64Mi"
+          limits:
+            cpu: "200m"
+            memory: "128Mi"
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: 8080
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          failureThreshold: 3
+          timeoutSeconds: 5
+        readinessProbe:
+          httpGet:
+            path: /ready
+            port: 8080
+          initialDelaySeconds: 5
+          periodSeconds: 5
+          failureThreshold: 3
+          timeoutSeconds: 3
+
+---
+# 4. SERVICE
+apiVersion: v1
+kind: Service
+metadata:
+  name: i27-app-svc
+  namespace: demo
+  labels:
+    app: i27-app
+    managed-by: i27academy
+spec:
+  selector:
+    app: i27-app
+  ports:
+  - port: 80
+    targetPort: 8080
+    protocol: TCP
+    name: http
+  type: ClusterIP
+
+---
+# ──────────────────────────────────────────────────────
+# SCENARIO VARIANTS — use these for specific episodes
+# ──────────────────────────────────────────────────────
+
+# SCENARIO: CrashLoopBackOff — broken liveness probe
+# Episode: Pods Q1
+# Change livenessProbe path to something that doesn't exist
+# livenessProbe:
+#   httpGet:
+#     path: /doesnotexist   ← triggers CrashLoopBackOff
+#     port: 8080
+#   initialDelaySeconds: 5
+#   failureThreshold: 1
+
+# SCENARIO: Rolling update frozen — readiness probe failing
+# Episode: Deployments Q8
+# Change readinessProbe path on v2 deployment
+# readinessProbe:
+#   httpGet:
+#     path: /doesnotexist   ← new pods never Ready
+#     port: 8080
+
+# SCENARIO: OOMKilled — hit /oom endpoint after deploy
+# Episode: Pods Q6
+# Set memory limit very low
+# resources:
+#   limits:
+#     memory: "20Mi"        ← OOMKilled when /oom hit
+
+# SCENARIO: Slow startup — readiness delay
+# Episode: Probes deep dive
+# Call /slow?seconds=60 to simulate slow startup
+# Use startupProbe to handle it properly
