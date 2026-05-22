@@ -381,7 +381,7 @@ button { font: inherit; }
     </header>
 
     <section class="hero">
-      <h2>Production-ready demo console</h2>
+      <h2>Production-ready demo console 1</h2>
       <p>Monitor app metadata, probe status, runtime configuration, and failure simulation endpoints from a clean i27Academy interface.</p>
     </section>
 
