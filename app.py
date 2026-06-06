@@ -446,7 +446,7 @@ button { font: inherit; }
       <section class="card" style="grid-column: 1 / -1;">
         <div class="card-header">
           <div>
-            <h2 class="card-title">Activity Log</h2>
+            <h2 class="card-title">Activity Logs</h2>
             <p class="card-subtitle">Requests and responses from this page.</p>
           </div>
           <span class="badge good" id="feed-badge">Connected</span>
