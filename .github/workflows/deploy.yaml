@@ -33,6 +33,20 @@ jobs:
           run: |
             echo "Testing OC client by listing pods in the cluster..."
             oc get pods -n i27-github-actions-demo
+        - name: Trigger S2I  Build 
+          run: 
+            oc start-build i27academy-demo-app -n i27-github-actions-demo
+
+
+
+
+
+
+
+
+
+
+
            # oc login --token=$SA_TOKEN --server=https://api.i27-cluster.i27openshift.com:6443
         #   run: |
         #     echo "Installing oc client..."
