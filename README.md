@@ -8,7 +8,7 @@ Custom demo application used across the
 
 ---
 
-## Why this app exists
+## Why this app  exists
 
 Every episode was using `nginx` as a demo app.
 nginx has no `/healthz` endpoint, no version info,
