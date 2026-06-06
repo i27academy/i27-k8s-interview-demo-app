@@ -22,6 +22,18 @@ jobs:
           run: |
                 echo "Verifying OC client installation..."
                 oc version --client
+        - name: Login to Openshift cluster 
+          run: |
+            echo "************** Logging in to OpenShift cluster *************"
+            oc login \
+              --server=${{ secrets.OC_SERVER }} \
+              --token=${{  secrets.OC_TOKEN }} \
+              --insecure-skip-tls-verify=true
+        - name: Test List of Pods
+          run: |
+            echo "Testing OC client by listing pods in the cluster..."
+            oc get pods -n i27-github-actions-demo
+           # oc login --token=$SA_TOKEN --server=https://api.i27-cluster.i27openshift.com:6443
         #   run: |
         #     echo "Installing oc client..."
         #     curl -L https://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest/openshift-client-linux.tar.gz | tar xz -C /usr/local/bin --no-same-owner --strip-components=1 oc kubectl
