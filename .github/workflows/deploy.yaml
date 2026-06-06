@@ -14,3 +14,14 @@ jobs:
           run: |
             echo "Checking out code..."
             ls -la
+        - name: Install oc client 
+          uses: redhat-actions/openshift-tools-installer@v1
+          with:
+            oc: 'latest'
+        - name: Verify OC Client Version 
+          run: |
+                echo "Verifying OC client installation..."
+                oc version --client
+        #   run: |
+        #     echo "Installing oc client..."
+        #     curl -L https://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest/openshift-client-linux.tar.gz | tar xz -C /usr/local/bin --no-same-owner --strip-components=1 oc kubectl
