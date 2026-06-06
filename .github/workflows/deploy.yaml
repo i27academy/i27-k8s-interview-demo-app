@@ -25,6 +25,7 @@ jobs:
         - name: Login to Openshift cluster 
           run: |
             echo "************** Logging in to OpenShift cluster *************"
+            # make sure u add these secrets into githb > settings > actions > secret(repository level)
             oc login \
               --server=${{ secrets.OC_SERVER }} \
               --token=${{  secrets.OC_TOKEN }} \
