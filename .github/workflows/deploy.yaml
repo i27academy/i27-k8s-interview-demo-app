@@ -1,0 +1,16 @@
+name: Deploy to Openshfit 
+on: 
+    push: 
+        branches: 
+            - master
+jobs:
+    deploy:
+        name: deploy-job
+        runs-on: ubuntu-latest
+        steps:
+        - name: Checkout code
+          uses: actions/checkout@v6
+        - name: List the files in the reppository
+          run: |
+            echo "Checking out code..."
+            ls -la
