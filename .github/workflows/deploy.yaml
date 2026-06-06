@@ -38,7 +38,7 @@ jobs:
             oc start-build i27academy-demo-app -n i27-github-actions-demo
         - name: Verify Deployment 
           run: 
-            oc rollout status deploy/i27academy-demo-app --timeout=120s -n i27-github-actions-demo
+            oc rollout status deployment/i27academy-demo-app --timeout=120s -n i27-github-actions-demo
             echo "*********** Deployment Succesfull! , App is live in Openshift"
           
 
